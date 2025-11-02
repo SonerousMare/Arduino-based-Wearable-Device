@@ -1,0 +1,46 @@
+#include <SPI.h>
+#include <Adafruit_CircuitPlayground.h>
+#include <Wire.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_LSM9DS0.h>
+// The code above simply imports and uses the functions needed to use the Arduino circuit playground and sensors.
+int switchState = 0; // Assigning a variable to store the state of the switch
+int threshold = 100; // Setting the threshold value
+Adafruit_LSM9DS0 lsm = Adafruit_LSM9DS0(1000); // This initializes the sensor with I2C communication and assigns it a unique base ID
+#define LSM9DS0_XM_CS 10 // Selects Pin 10 on chip to be magnetometer
+#define LSM9DS0_SCLK 13// This defines pin 13 as the SPI clock pin
+#define LSM9DS0_MISO 12 // Defines the SPI MISO pin to pin 12
+#define LSM9DS0_MOSI 11 // Defines the SPI MOSI pin to pin 11
+
+void configureSensor(void)
+{
+  lsm.setupAccel(lsm.LSM9DS0_ACCELRANGE_2G);  
+  lsm.setupMag(lsm.LSM9DS0_MAGGAIN_2GAUSS); // This sets the magnetometer sensitivity to ±2 Gauss 
+
+  lsm.setupGyro(lsm.LSM9DS0_GYROSCALE_245DPS);
+}
+void setup(void) 
+{
+  pinMode(A1, INPUT); //This sets pin A1 as input
+  pinMode(A6, OUTPUT); // This sets pin A6 as output
+#ifndef ESP8266
+  while (!Serial);     // ensures the serial connection is established before the setup functions begin
+#endif
+  Serial.begin(9600);
+}
+
+void loop(void) 
+{  
+sensors_event_t accel, mag, gyro, temp;
+lsm.getEvent(&accel, &mag, &gyro, &temp); //This line of code reads the magnetometer data and stores it into the sensor event variable defined earlier
+  
+  float magMagnitude = sqrt(pow(mag.magnetic.x, 2) + pow(mag.magnetic.y, 2) + pow(mag.magnetic.z, 2));   // The magnitude of the magnetic field is calculated and stored in variable magMagnitude. 
+
+  switchState = digitalRead(A1);
+  if (magMagnitude > threshold && switchState ==HIGH) {
+    digitalWrite(A6, HIGH); // The motor is turned on when the threshold value is exceeded and the switch is turned on
+  } else {
+    digitalWrite(A6, LOW); // Otherwise the motor remains off
+  }
+  delay(250);
+}
