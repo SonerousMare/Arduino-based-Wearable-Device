@@ -7,7 +7,7 @@ The aim of this project was to develop a **magnetic field sensor to alert patien
 
 
 
-
+Note: All code was _not developed by me_, this was not a solo accomplishment. Including me, there were 2 **main contributors** to the code.
 
 
 
