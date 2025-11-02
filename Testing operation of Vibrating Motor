@@ -1,0 +1,33 @@
+#include <Adafruit_CircuitPlayground.h>
+#include <SPI.h>
+#include <Wire.h>
+#include <Adafruit_Sensor.h>
+
+
+//int motorPIN = A1;
+
+//int motorState = 0;
+
+int switchState = 0;
+
+
+void setup()
+{
+  pinMode(A1, INPUT); //Sets the switch as the input
+  pinMode(A6, OUTPUT); //Sets the motor as the output
+  Serial.begin (9600);
+  //CircuitPlayground.begin();
+  
+}
+
+void loop() {
+switchState = analogRead(A1); //Read's the state of the switch using digitalRead function
+  if (switchState >= 200) {
+    if (magMagnitude > 300)
+    digitalWrite(A6, HIGH);
+  } 
+  else {
+    digitalWrite(A6,LOW);
+  }
+  
+}
